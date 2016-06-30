@@ -3,6 +3,7 @@ package com.ds.todo.models;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,15 +15,11 @@ public class UserSessionRepository {
 
     private Sql2o mSql;
 
-    public UserSessionRepository() {
-        mSql = new Sql2o("jdbc:mysql://64.90.60.189/ds_todos_1", "dsutedja", "__Test12");
+    public UserSessionRepository(DataSource dataSource) {
+        mSql = new Sql2o(dataSource);
     }
 
     //---- TESTING CODE ----//
-    UserSessionRepository(String testEnvURL) {
-        mSql = new Sql2o(testEnvURL, "dsutedja", "__Test12");
-    }
-
     void deleteAll() {
         String sql = "DELETE from USER_SESSION";
         try (Connection conn = mSql.open()) {

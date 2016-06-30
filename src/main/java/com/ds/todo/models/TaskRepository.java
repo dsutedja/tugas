@@ -2,6 +2,7 @@ package com.ds.todo.models;
 
 import org.sql2o.Sql2o;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -10,8 +11,8 @@ import java.util.List;
 public class TaskRepository {
     private Sql2o mSql;
 
-    public TaskRepository() {
-        mSql = new Sql2o("jdbc:mysql://64.90.60.189/ds_todos_1", "dsutedja", "__Test12");
+    public TaskRepository(DataSource dataSource) {
+        mSql = new Sql2o(dataSource);
     }
 
     public Task findByTaskID(int id) {

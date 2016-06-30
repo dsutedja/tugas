@@ -4,10 +4,19 @@ import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.PasswordUtil;
 import com.ds.todo.models.User;
 import com.ds.todo.models.UserRepository;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import javafx.util.converter.DateStringConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Created by dsutedja on 6/28/16.
@@ -15,9 +24,17 @@ import org.junit.Test;
 public class TestUserRepo {
     private UserRepository userRepository;
 
+    private static DataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig("hikari_test.properties");
+        dataSource = new HikariDataSource(config);
+    }
+
+
     @Before
     public void initialize() {
-        userRepository = new UserRepository("jdbc:mysql://64.90.60.189:3306/ds_todos_testenv");
+        userRepository = new UserRepository(dataSource);
         userRepository.deleteAll();
     }
 
@@ -30,7 +47,9 @@ public class TestUserRepo {
     public void testInsertUser() {
         User user = getFakeUser();
 
+        long start = System.currentTimeMillis();
         userRepository.insert(user);
+        System.out.println("Insert: elapsed: " + (System.currentTimeMillis() - start) + " ms");
         assert(user.getId() != -1);
     }
 

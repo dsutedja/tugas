@@ -9,6 +9,8 @@ import com.ds.todo.models.UserSessionRepository;
 import spark.Request;
 import spark.Response;
 
+import javax.sql.DataSource;
+
 import static spark.Spark.*;
 
 /**
@@ -35,9 +37,9 @@ public class AuthenticationController {
         Reason: Invalid Login
      }
      */
-    public AuthenticationController() {
-        mSessionRepo = new UserSessionRepository();
-        mUserRepo = new UserRepository();
+    public AuthenticationController(DataSource dataSource) {
+        mSessionRepo = new UserSessionRepository(dataSource);
+        mUserRepo = new UserRepository(dataSource);
 
         post("/todos/auth/:version/login", (req, res) -> {
             String sessionId = checkSession(req);

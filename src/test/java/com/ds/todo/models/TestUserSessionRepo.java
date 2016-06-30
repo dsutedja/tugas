@@ -2,9 +2,15 @@ package com.ds.todo.models;
 
 import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.PasswordUtil;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.sql.DataSource;
+import java.io.PrintWriter;
+import java.util.Properties;
 
 /**
  * Created by dsutedja on 6/28/16.
@@ -13,16 +19,22 @@ public class TestUserSessionRepo {
     private UserRepository userRepository;
     private UserSessionRepository sessionRepository;
     private User theUser;
+    private static DataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig("hikari_test.properties");
+        dataSource = new HikariDataSource(config);
+    }
 
     @Before
     public void initialize() {
-        userRepository = new UserRepository("jdbc:mysql://64.90.60.189:3306/ds_todos_testenv");
+        userRepository = new UserRepository(dataSource);
         userRepository.deleteAll();
 
         theUser = getFakeUser();
         userRepository.insert(theUser);
 
-        sessionRepository = new UserSessionRepository("jdbc:mysql://64.90.60.189:3306/ds_todos_testenv");
+        sessionRepository = new UserSessionRepository(dataSource);
         sessionRepository.deleteAll();
     }
 

@@ -5,6 +5,7 @@ import com.ds.todo.com.ds.todo.utils.IDGenerator;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -14,14 +15,11 @@ public class UserRepository {
     private static final int RETRY_THRESHOLD = 10;
     private Sql2o mSql;
 
-    public UserRepository() {
-        mSql = new Sql2o("jdbc:mysql://64.90.60.189:3306/ds_todos_1", "dsutedja", "__Test12");
+    public UserRepository(DataSource dataSource) {
+        mSql = new Sql2o(dataSource);
     }
 
     //---- TESTING CODE ----//
-    UserRepository(String testEnvURL) {
-        mSql = new Sql2o(testEnvURL, "dsutedja", "__Test12");
-    }
 
     void deleteAll() {
         String sql = "DELETE from USER";
@@ -80,10 +78,13 @@ public class UserRepository {
 
         int count = 0;
         int retry = 0;
+        long start = System.currentTimeMillis();
         try (Connection conn = mSql.open()) {
+            System.out.println("** insert's open connection: elapsed: " + (System.currentTimeMillis() - start) + " ms");
             while (count == 0 && retry <= RETRY_THRESHOLD) {
                 retry ++;
                 int randomID = IDGenerator.nextID();
+                start = System.currentTimeMillis();
                 count = conn.createQuery(sql)
                         .addParameter("id", randomID)
                         .addParameter("username", user.getUsername())
@@ -93,6 +94,7 @@ public class UserRepository {
                         .addParameter("lastmod", user.getLastMod())
                         .executeUpdate()
                         .getResult();
+                System.out.println("** insert's execution: elapsed: " + (System.currentTimeMillis() - start) + " ms");
                 user.setId(randomID);
             }
         } catch (Exception er) {
@@ -109,6 +111,7 @@ public class UserRepository {
                 + " WHERE id = :id";
 
         int count = 0;
+
         try (Connection conn = mSql.open()) {
             count = conn.createQuery(sql)
                     .addParameter("username", user.getUsername())
