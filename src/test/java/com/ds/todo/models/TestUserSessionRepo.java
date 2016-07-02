@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -50,6 +51,15 @@ public class TestUserSessionRepo {
 
         sessionRepository.insert(session);
         assert(session.getId() != -1);
+    }
+
+    @Test
+    public void testInsertDuplicate() {
+        UserSession session = getFakeSession();
+        sessionRepository.insert(session);
+
+        UserSession target = sessionRepository.insert(session);
+        assert(target == null);
     }
 
     @Test
@@ -99,6 +109,18 @@ public class TestUserSessionRepo {
         assert(target.getUserID() == theUser.getId());
         assert(target.getSessionId().equals(session.getSessionId()));
         assert(target.mLoadedFromDB == true);
+    }
+
+    @Test
+    public void testFindInvalidSessionID() {
+        UserSession target = sessionRepository.findBySessionID("jhaskjhaskjghaksjhg");
+        assert(target == null);
+    }
+
+    @Test
+    public void testFindInvalidUserID() {
+        UserSession target = sessionRepository.findByUserID(-1);
+        assert(target == null);
     }
 
     private User getFakeUser() {

@@ -147,7 +147,7 @@ public class UserSessionRepository {
                 session.setId(randomID);
             }
         } catch (Exception er) {
-            er.printStackTrace();
+            System.out.println("WARNING: failed to insert, message: " + er.getMessage());
         }
 
         return count > 0 ? session : null;
