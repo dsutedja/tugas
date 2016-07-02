@@ -15,8 +15,9 @@ public class Task {
     private int userId;
     private String title;
     private String description;
-    private int completed;
-    private String timestamp;
+    private State state;
+
+    private String lastModified;
 
     // to be used by repo
     boolean mLoadedFromDB;
@@ -53,19 +54,36 @@ public class Task {
         this.description = description;
     }
 
-    public int getCompleted() {
-        return completed;
+    public State getState() {
+        return state;
     }
 
-    public void setCompleted(int completed) {
-        this.completed = completed;
+    public void setState(State state) {
+        this.state = state;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getLastModified() {
+        return lastModified;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
+
+
+    public boolean equals(Object o) {
+        boolean retVal = false;
+
+        if (o instanceof Task) {
+            Task other = (Task) o;
+            retVal = other.getLastModified().equals(this.getLastModified())
+                     && other.getTitle().equals(this.getTitle())
+                     && other.getId() == this.getId()
+                     && other.getUserId() == this.getUserId()
+                     && other.getDescription().equals(this.getDescription())
+                     && other.getState().equals(this.getState());
+        }
+
+        return retVal;
     }
 }
