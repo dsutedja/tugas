@@ -4,36 +4,44 @@ package com.ds.todo.models;
  * Created by dsutedja on 6/22/16.
  */
 public class LoginResponse {
+    public enum Status {
+        SUCCESS,
+        INVALID_LOGIN,
+        USER_NOT_EXISTS,
+        USER_LOCKED;
 
-    public static class Success {
-        private String status = "Success";
-        private String sessionID;
-
-        public String getStatus() {
-            return status;
-        }
-        public String getSessionID() {
-            return sessionID;
-        }
-        public void setSessionID(String id) {
-            sessionID = id;
+        public String toString() {
+            switch(this.ordinal()) {
+                case 0:
+                    return "SUCCESS";
+                case 1:
+                    return "INVALID_LOGIN";
+                case 2:
+                    return "USER_NOT_EXISTS";
+                case 3:
+                    return "USER_LOCKED";
+                default:
+                    return "INVALID_LOGIN";
+            }
         }
     }
 
-    public static class Failure {
-        private String status = "Failure";
-        private String reason;
+    private Status status;
+    private String sessionId;
 
-        public String getStatus() {
-            return status;
-        }
+    public LoginResponse(Status status) {
+        this.status = status;
+    }
 
-        public String getReason() {
-            return reason;
-        }
+    public Status getStatus() {
+        return status;
+    }
 
-        public void setReason(String reason) {
-            this.reason = reason;
-        }
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String id) {
+        sessionId = id;
     }
 }

@@ -67,6 +67,15 @@ public class TestUserRepo {
     }
 
     @Test
+    public void testFindUserByNullUsername() {
+        User user = getFakeUser();
+        userRepository.insert(user);
+
+        User target = userRepository.findByUsername(null);
+        assert(target == null);
+    }
+
+    @Test
     public void testUpdateUser() {
         User user = getFakeUser();
         userRepository.insert(user);
@@ -113,6 +122,8 @@ public class TestUserRepo {
         String encoded = PasswordUtil.md5(password, salt);
         user.setPassword(encoded);
         user.setSalt(salt);
+        user.setLocked(false);
+        user.setLoginAttempt(0);
         user.setCreationTime(System.currentTimeMillis());
         user.setLastMod(System.currentTimeMillis());
         return user;

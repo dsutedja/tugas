@@ -38,6 +38,7 @@ public class UserRepository {
             List<User> results = conn.createQuery(sql)
                     .addParameter("username", username)
                     .addColumnMapping("created", "creationTime")
+                    .addColumnMapping("login_attempt", "loginAttempt")
                     .executeAndFetch(User.class);
             if (results != null && !results.isEmpty()) {
                 retVal = results.get(0);
@@ -57,6 +58,7 @@ public class UserRepository {
             List<User> results = conn.createQuery(sql)
                     .addParameter("id", userID)
                     .addColumnMapping("created", "creationTime")
+                    .addColumnMapping("login_attempt", "loginAttempt")
                     .executeAndFetch(User.class);
 
             if (results != null && !results.isEmpty()) {
@@ -72,8 +74,8 @@ public class UserRepository {
 
     public User insert(User user) {
         String sql =
-                "INSERT INTO USER (id, username, password, salt, created, lastmod)"
-                + " values (:id, :username, :password, :salt, :created, :lastmod)";
+                "INSERT INTO USER (id, username, password, salt, login_attempt, locked, created, lastmod)"
+                + " values (:id, :username, :password, :salt, :login_attempt, :locked, :created, :lastmod)";
 
         int count = 0;
         int retry = 0;
@@ -89,6 +91,8 @@ public class UserRepository {
                         .addParameter("username", user.getUsername())
                         .addParameter("password", user.getPassword())
                         .addParameter("salt", user.getSalt())
+                        .addParameter("login_attempt", user.getLoginAttempt())
+                        .addParameter("locked", user.isLocked())
                         .addParameter("created", user.getCreationTime())
                         .addParameter("lastmod", user.getLastMod())
                         .executeUpdate()
@@ -106,7 +110,7 @@ public class UserRepository {
     public boolean update(User user) {
         String sql =
                 "UPDATE USER"
-                + " SET username = :username, password = :password, salt = :salt, lastmod = :lastmod"
+                + " SET username = :username, password = :password, salt = :salt, login_attempt = :login_attempt, locked = :locked, lastmod = :lastmod"
                 + " WHERE id = :id";
 
         int count = 0;
@@ -116,6 +120,8 @@ public class UserRepository {
                     .addParameter("username", user.getUsername())
                     .addParameter("password", user.getPassword())
                     .addParameter("salt", user.getSalt())
+                    .addParameter("login_attempt", user.getLoginAttempt())
+                    .addParameter("locked", user.isLocked())
                     .addParameter("lastmod", System.currentTimeMillis())
                     .addParameter("id", user.getId())
                     .executeUpdate()

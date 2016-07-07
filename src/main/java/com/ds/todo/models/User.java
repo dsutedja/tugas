@@ -10,6 +10,8 @@ public class User {
     private String salt;
     private long creationTime;
     private long lastMod;
+    private boolean locked;
+    private int loginAttempt;
 
     // to be used by repo
     boolean mLoadedFromDB;
@@ -66,5 +68,20 @@ public class User {
         this.lastMod = lastMod;
     }
 
+    public int getLoginAttempt() {
+        return loginAttempt;
+    }
+
+    public void setLoginAttempt(int loginAttempt) {
+        this.loginAttempt = loginAttempt;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
 
 }

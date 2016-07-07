@@ -13,16 +13,14 @@ import java.util.Properties;
  * Created by dsutedja on 6/20/16.
  */
 public class Main {
-    public static void main(String[] argv) {
-        Properties props = new Properties();
-        props.setProperty("dataSourceClassName", "com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        props.setProperty("dataSource.user", "dsutedja");
-        props.setProperty("dataSource.password", "__Test12");
-        props.setProperty("dataSource.databaseName", "ds_todos_1");
-        props.put("dataSource.logWriter", new PrintWriter(System.out));
+    private static DataSource dataSource;
 
-        HikariConfig config = new HikariConfig(props);
-        DataSource dataSource = new HikariDataSource(config);
+    static {
+        HikariConfig config = new HikariConfig("hikari.properties");
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static void main(String[] argv) {
         new AuthenticationController(dataSource);
     }
 }
