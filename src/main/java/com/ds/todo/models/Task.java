@@ -16,8 +16,8 @@ public class Task {
     private String title;
     private String description;
     private State state;
-
-    private String lastModified;
+    private long creationTime;
+    private long lastModified;
 
     // to be used by repo
     boolean mLoadedFromDB;
@@ -62,21 +62,29 @@ public class Task {
         this.state = state;
     }
 
-    public String getLastModified() {
+    public long getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(String lastModified) {
+    public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
 
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
 
     public boolean equals(Object o) {
         boolean retVal = false;
 
         if (o instanceof Task) {
             Task other = (Task) o;
-            retVal = other.getLastModified().equals(this.getLastModified())
+            retVal = other.getLastModified() == this.getLastModified()
+                     && other.getCreationTime() == this.getCreationTime()
                      && other.getTitle().equals(this.getTitle())
                      && other.getId() == this.getId()
                      && other.getUserId() == this.getUserId()

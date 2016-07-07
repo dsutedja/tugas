@@ -44,7 +44,7 @@ public class UserSessionRepository {
                     .addParameter("session_id", sessionId)
                     .addColumnMapping("user_id", "userId")
                     .addColumnMapping("session_id", "sessionId")
-                    .addColumnMapping("last_login", "lastLogin")
+                    .addColumnMapping("created", "creationTime")
                     .executeAndFetch(UserSession.class);
         } catch (Exception er) {
             er.printStackTrace();
@@ -73,7 +73,7 @@ public class UserSessionRepository {
                     .addParameter("user_id", userID)
                     .addColumnMapping("user_id", "userId")
                     .addColumnMapping("session_id", "sessionId")
-                    .addColumnMapping("last_login", "lastLogin")
+                    .addColumnMapping("created", "creationTime")
                     .executeAndFetch(UserSession.class);
         } catch (Exception er) {
             er.printStackTrace();
@@ -102,14 +102,14 @@ public class UserSessionRepository {
         String sql =
                 "UPDATE USER_SESSION SET "
                         + "session_id = :session_id, "
-                        + "last_login = :last_login, "
+                        + "created = :created, "
                         + "timeout = :timeout "
                         + "WHERE id = :id";
         int retVal = -1;
         try (Connection conn = mSql.open()){
             retVal = conn.createQuery(sql)
                     .addParameter("session_id", session.getSessionId())
-                    .addParameter("last_login", session.getLastLogin())
+                    .addParameter("created", session.getCreationTime())
                     .addParameter("timeout", session.getTimeOut())
                     .addParameter("id", session.getId())
                     .executeUpdate()
@@ -127,8 +127,8 @@ public class UserSessionRepository {
         }
 
         String sql =
-                "INSERT INTO USER_SESSION (id, user_id, session_id, last_login, timeout)"
-                + " values (:id, :user_id, :session_id, :last_login, :timeout)";
+                "INSERT INTO USER_SESSION (id, user_id, session_id, created, timeout)"
+                + " values (:id, :user_id, :session_id, :created, :timeout)";
 
         int count = 0;
         try (Connection conn = mSql.open()) {
@@ -140,7 +140,7 @@ public class UserSessionRepository {
                         .addParameter("id", randomID)
                         .addParameter("user_id", session.getUserID())
                         .addParameter("session_id", session.getSessionId())
-                        .addParameter("last_login", session.getLastLogin())
+                        .addParameter("created", session.getCreationTime())
                         .addParameter("timeout", session.getTimeOut())
                         .executeUpdate()
                         .getResult();

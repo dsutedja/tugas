@@ -1,6 +1,5 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.IDGenerator;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -38,7 +37,7 @@ public class UserRepository {
         try (Connection conn = mSql.open()) {
             List<User> results = conn.createQuery(sql)
                     .addParameter("username", username)
-                    .addColumnMapping("creation_date", "creationDate")
+                    .addColumnMapping("created", "creationTime")
                     .executeAndFetch(User.class);
             if (results != null && !results.isEmpty()) {
                 retVal = results.get(0);
@@ -57,7 +56,7 @@ public class UserRepository {
         try (Connection conn = mSql.open()) {
             List<User> results = conn.createQuery(sql)
                     .addParameter("id", userID)
-                    .addColumnMapping("creation_date", "creationDate")
+                    .addColumnMapping("created", "creationTime")
                     .executeAndFetch(User.class);
 
             if (results != null && !results.isEmpty()) {
@@ -73,8 +72,8 @@ public class UserRepository {
 
     public User insert(User user) {
         String sql =
-                "INSERT INTO USER (id, username, password, salt, creation_date, lastmod)"
-                + " values (:id, :username, :password, :salt, :creation_date, :lastmod)";
+                "INSERT INTO USER (id, username, password, salt, created, lastmod)"
+                + " values (:id, :username, :password, :salt, :created, :lastmod)";
 
         int count = 0;
         int retry = 0;
@@ -90,7 +89,7 @@ public class UserRepository {
                         .addParameter("username", user.getUsername())
                         .addParameter("password", user.getPassword())
                         .addParameter("salt", user.getSalt())
-                        .addParameter("creation_date", user.getCreationDate())
+                        .addParameter("created", user.getCreationTime())
                         .addParameter("lastmod", user.getLastMod())
                         .executeUpdate()
                         .getResult();
@@ -117,7 +116,7 @@ public class UserRepository {
                     .addParameter("username", user.getUsername())
                     .addParameter("password", user.getPassword())
                     .addParameter("salt", user.getSalt())
-                    .addParameter("lastmod", DatesUtil.nowToSQLTimestamp())
+                    .addParameter("lastmod", System.currentTimeMillis())
                     .addParameter("id", user.getId())
                     .executeUpdate()
                     .getResult();

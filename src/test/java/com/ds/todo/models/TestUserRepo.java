@@ -1,22 +1,13 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.PasswordUtil;
-import com.ds.todo.models.User;
-import com.ds.todo.models.UserRepository;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import javafx.util.converter.DateStringConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * Created by dsutedja on 6/28/16.
@@ -122,9 +113,8 @@ public class TestUserRepo {
         String encoded = PasswordUtil.md5(password, salt);
         user.setPassword(encoded);
         user.setSalt(salt);
-        String now = DatesUtil.nowToSQLTimestamp();
-        user.setCreationDate(now);
-        user.setLastMod(now);
+        user.setCreationTime(System.currentTimeMillis());
+        user.setLastMod(System.currentTimeMillis());
         return user;
     }
 

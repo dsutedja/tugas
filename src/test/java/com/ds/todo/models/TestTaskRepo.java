@@ -1,6 +1,5 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.PasswordUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -156,7 +155,7 @@ public class TestTaskRepo {
         task.setDescription("Test Task Description");
         task.setId(-1);
         task.setUserId(fakeUser.getId());
-        task.setLastModified(DatesUtil.nowToSQLTimestamp());
+        task.setLastModified(System.currentTimeMillis());
         task.setTitle("Test Task Title");
         return task;
     }
@@ -169,9 +168,8 @@ public class TestTaskRepo {
         String encoded = PasswordUtil.md5(password, salt);
         user.setPassword(encoded);
         user.setSalt(salt);
-        String now = DatesUtil.nowToSQLTimestamp();
-        user.setCreationDate(now);
-        user.setLastMod(now);
+        user.setCreationTime(System.currentTimeMillis());
+        user.setLastMod(System.currentTimeMillis());
         return user;
     }
 }

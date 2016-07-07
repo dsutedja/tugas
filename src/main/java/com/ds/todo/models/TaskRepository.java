@@ -34,12 +34,13 @@ public class TaskRepository {
     public Task findByTaskID(int id) {
         Task retVal = null;
 
-        String sql = "SELECT id, user_id, title, description, state, DATE_FORMAT(lastmod, '%Y-%m-%d %H:%i:%s') as lastmod FROM TASK WHERE id = :id";
+        String sql = "SELECT id, user_id, title, description, state, created, lastmod FROM TASK WHERE id = :id";
 
         try (Connection conn = mSql.open()) {
             List<Task> results = conn.createQuery(sql)
                     .addParameter("id", id)
                     .addColumnMapping("user_id", "userId")
+                    .addColumnMapping("created", "creationTime")
                     .addColumnMapping("lastmod", "lastModified")
                     .executeAndFetch(Task.class);
             if (results.size() != 1) {
@@ -57,12 +58,13 @@ public class TaskRepository {
     public List<Task> findByUserId(int userID) {
         List<Task> results = null;
 
-        String sql = "SELECT id, user_id, title, description, state, DATE_FORMAT(lastmod, '%Y-%m-%d %H:%i:%s') as lastmod FROM TASK where user_id = :user_id";
+        String sql = "SELECT id, user_id, title, description, state, created, lastmod FROM TASK where user_id = :user_id";
 
         try (Connection conn = mSql.open()) {
             results = conn.createQuery(sql)
                     .addParameter("user_id", userID)
                     .addColumnMapping("user_id", "userId")
+                    .addColumnMapping("created", "creationTime")
                     .addColumnMapping("lastmod", "lastModified")
                     .executeAndFetch(Task.class);
         } catch (Exception er) {
@@ -74,13 +76,14 @@ public class TaskRepository {
     public List<Task> findByUserIdAndState(int userId, Task.State state) {
         List<Task> results = null;
 
-        String sql = "SELECT id, user_id, title, description, state, DATE_FORMAT(lastmod, '%Y-%m-%d %H:%i:%s') as lastmod FROM TASK where user_id = :user_id and state = :state";
+        String sql = "SELECT id, user_id, title, description, state, created, lastmod FROM TASK where user_id = :user_id and state = :state";
 
         try (Connection conn = mSql.open()) {
             results = conn.createQuery(sql)
                     .addParameter("user_id", userId)
                     .addParameter("state", state.ordinal())
                     .addColumnMapping("user_id", "userId")
+                    .addColumnMapping("created", "creationTime")
                     .addColumnMapping("lastmod", "lastModified")
                     .executeAndFetch(Task.class);
         } catch (Exception er) {
@@ -95,8 +98,8 @@ public class TaskRepository {
         }
 
         String sql =
-                "INSERT INTO TASK (id, user_id, title, description, state, lastmod)"
-                + " values (:id, :user_id, :title, :description, :state, :lastmod)";
+                "INSERT INTO TASK (id, user_id, title, description, state, created, lastmod)"
+                + " values (:id, :user_id, :title, :description, :state, :created, :lastmod)";
 
         int count = 0;
         try (Connection conn = mSql.open()) {
@@ -110,6 +113,7 @@ public class TaskRepository {
                         .addParameter("title", task.getTitle())
                         .addParameter("description", task.getDescription())
                         .addParameter("state", task.getState().ordinal())
+                        .addParameter("created", task.getCreationTime())
                         .addParameter("lastmod", task.getLastModified())
                         .executeUpdate()
                         .getResult();
@@ -133,6 +137,7 @@ public class TaskRepository {
                 + " title = :title, "
                 + " description = :description, "
                 + " state = :state, "
+                + " created = :created, "
                 + " lastmod = :lastmod"
                 + " WHERE id = :id and user_id = :user_id";
         int count = 0;
@@ -141,7 +146,8 @@ public class TaskRepository {
                     .addParameter("title", task.getTitle())
                     .addParameter("description", task.getDescription())
                     .addParameter("state", task.getState().ordinal())
-                    .addParameter("lastmod", DatesUtil.nowToSQLTimestamp())
+                    .addParameter("created", task.getCreationTime())
+                    .addParameter("lastmod", System.currentTimeMillis())
                     .addParameter("id", task.getId())
                     .addParameter("user_id", task.getUserId())
                     .executeUpdate()

@@ -1,17 +1,13 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.PasswordUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.io.PrintWriter;
-import java.util.Properties;
 
 /**
  * Created by dsutedja on 6/28/16.
@@ -131,9 +127,8 @@ public class TestUserSessionRepo {
         String encoded = PasswordUtil.md5(password, salt);
         user.setPassword(encoded);
         user.setSalt(salt);
-        String now = DatesUtil.nowToSQLTimestamp();
-        user.setCreationDate(now);
-        user.setLastMod(now);
+        user.setCreationTime(System.currentTimeMillis());
+        user.setLastMod(System.currentTimeMillis());
         return user;
     }
 
@@ -141,7 +136,7 @@ public class TestUserSessionRepo {
         UserSession session = new UserSession();
         session.setUserID(theUser.getId());
         session.setSessionId("098125khjasf");
-        session.setLastLogin(DatesUtil.nowToSQLTimestamp());
+        session.setCreationTime(System.currentTimeMillis());
         session.setTimeOut(1000);
         return session;
     }

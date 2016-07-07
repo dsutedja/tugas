@@ -1,8 +1,5 @@
 package com.ds.todo.models;
 
-import org.sql2o.Connection;
-import org.sql2o.Sql2o;
-
 /**
  * Created by dsutedja on 6/21/16.
  */
@@ -10,7 +7,7 @@ public class UserSession {
     private int userID;
     private int id;
     private String sessionId;
-    private String lastLogin;
+    private long creationTime;
     private int timeOut;
 
     /** package level:: to be used by repository **/
@@ -44,12 +41,12 @@ public class UserSession {
         this.sessionId = sessionId;
     }
 
-    public String getLastLogin() {
-        return lastLogin;
+    public long getCreationTime() {
+        return creationTime;
     }
 
-    public void setLastLogin(String lastLogin) {
-        this.lastLogin = lastLogin;
+    public void setCreationTime(long lastLogin) {
+        this.creationTime = lastLogin;
     }
 
     public int getTimeOut() {

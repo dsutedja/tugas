@@ -1,13 +1,11 @@
 package com.ds.todo.controllers;
 
-import com.ds.todo.com.ds.todo.utils.DatesUtil;
 import com.ds.todo.com.ds.todo.utils.PasswordUtil;
 import com.ds.todo.models.User;
 import com.ds.todo.models.UserRepository;
 import com.ds.todo.models.UserSession;
 import com.ds.todo.models.UserSessionRepository;
 import spark.Request;
-import spark.Response;
 
 import javax.sql.DataSource;
 
@@ -90,8 +88,9 @@ public class AuthenticationController {
         if (sessionId != null && !sessionId.isEmpty()) {
             UserSession session = mSessionRepo.findBySessionID(sessionId);
             if (session != null) {
+
                 // TODO: calculate timeout
-                session.setLastLogin(DatesUtil.toSQLTimestamp(null));
+                session.setCreationTime(System.currentTimeMillis());
                 mSessionRepo.update(session);
             } else {
                 sessionId = "";

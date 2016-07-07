@@ -8,8 +8,8 @@ public class User {
     private String username;
     private String password;
     private String salt;
-    private String creationDate;
-    private String lastMod;
+    private long creationTime;
+    private long lastMod;
 
     // to be used by repo
     boolean mLoadedFromDB;
@@ -50,19 +50,19 @@ public class User {
         this.salt = salt;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public long getCreationTime() {
+        return creationTime;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
-    public String getLastMod() {
+    public long getLastMod() {
         return lastMod;
     }
 
-    public void setLastMod(String lastMod) {
+    public void setLastMod(long lastMod) {
         this.lastMod = lastMod;
     }
 
