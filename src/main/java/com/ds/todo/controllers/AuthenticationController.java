@@ -4,6 +4,7 @@ import com.ds.todo.com.ds.todo.utils.PasswordUtil;
 import com.ds.todo.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
+import spark.Route;
 
 import javax.sql.DataSource;
 
@@ -22,42 +23,44 @@ public class AuthenticationController {
     private UserSessionRepository mSessionRepo;
     private UserRepository mUserRepo;
 
-    /**
-     success = {
-        Status: Success,
-        JESSIONID: jaskjfhaksjfh,
-        Last_Login: 89182974,
-        Valid_For: 098124987,
-     }
-     failed = {
-        Status: Failed,
-        Reason: Invalid Login
-     }
-     */
     public AuthenticationController(DataSource dataSource) {
         mSessionRepo = new UserSessionRepository(dataSource);
         mUserRepo = new UserRepository(dataSource);
 
-        get("/todos/auth/:version/login/", (req, res) -> {
+        get("/apis/:version/todos/auth/login/", loginRoute());
+    }
+
+    private Route loginRoute() {
+        return (req, res) -> {
             res.type("application/json");
 
-            LoginResponse result = doLogin(req);
-            switch (result.getStatus()) {
-                case SUCCESS:
-                    res.status(200);
-                    break;
-                case INVALID_LOGIN:
-                case USER_LOCKED:
-                case USER_NOT_EXISTS:
-                    res.status(401);
-                    break;
+            // This is for future releases, but for now, we only support "v1" version
+            // TODO: if I find a better way to handle this, I will change it
+            String version = req.params(":version");
+            if (version.toLowerCase().equalsIgnoreCase("v1")) {
+                LoginResponse result = doLogin(req);
+                switch (result.getStatus()) {
+                    case SUCCESS:
+                        res.status(200);
+                        break;
+                    case INVALID_LOGIN:
+                    case USER_LOCKED:
+                    case USER_NOT_EXISTS:
+                        res.status(401);
+                        break;
 
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(result);
+            } else {
+                UnsupportedVersion uv = new UnsupportedVersion();
+                uv.addSupportedVersion("v1");
+                uv.setSpecifiedVersion(version);
+                uv.setMessage("Request for unspported login API version has been denied");
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(uv);
             }
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(result);
-
-            return json;
-        });
+        };
     }
 
     public LoginResponse doLogin(Request req) {
