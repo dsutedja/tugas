@@ -8,7 +8,29 @@ public class Task {
         NONE,
         PENDING,
         STARTED,
-        COMPLETED
+        COMPLETED;
+
+        public static State getState(int val) {
+            State state = NONE;
+            switch (val) {
+                case 0:
+                    state = NONE;
+                    break;
+                case 1:
+                    state = PENDING;
+                    break;
+                case 2:
+                    state = STARTED;
+                    break;
+                case 3:
+                    state = COMPLETED;
+                    break;
+                default:
+                    state = NONE;
+                    break;
+            }
+            return state;
+        }
     }
 
     private int id;

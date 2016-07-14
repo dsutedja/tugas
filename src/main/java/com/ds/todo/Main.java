@@ -21,6 +21,7 @@ public class Main {
     }
 
     public static void main(String[] argv) {
-        new AuthenticationController(dataSource);
+        AuthenticationController auth = new AuthenticationController(dataSource);
+        new TaskController(dataSource, auth);
     }
 }

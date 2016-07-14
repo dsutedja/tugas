@@ -32,7 +32,7 @@ public class AuthenticationController {
         mSessionRepo = new UserSessionRepository(dataSource);
         mUserRepo = new UserRepository(dataSource);
 
-        get("/apis/:version/todos/auth/login/", loginRoute());
+        get("/apis/:version/auth/login/", loginRoute());
     }
 
     private Route loginRoute() {
