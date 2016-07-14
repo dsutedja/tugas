@@ -1,4 +1,4 @@
-package com.ds.todo.com.ds.todo.utils;
+package com.ds.todo.utils;
 
 import java.util.Random;
 

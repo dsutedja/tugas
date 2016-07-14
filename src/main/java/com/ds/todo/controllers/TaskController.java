@@ -1,8 +1,12 @@
 package com.ds.todo.controllers;
 
+import com.ds.todo.models.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Route;
 
-import javax.activation.DataSource;
+import javax.sql.DataSource;
+
+import java.util.List;
 
 import static spark.Spark.*;
 /**
@@ -12,19 +16,25 @@ public class TaskController {
 
     private DataSource dataSource;
     private AuthenticationController authController;
+    private UserRepository userRepository;
+    private UserSessionRepository sessionRepository;
+    private TaskRepository taskRepository;
 
     public TaskController(DataSource dataSource, AuthenticationController authController) {
         this.dataSource = dataSource;
         this.authController = authController;
 
+        userRepository = new UserRepository(dataSource);
+        sessionRepository = new UserSessionRepository(dataSource);
+        taskRepository = new TaskRepository(dataSource);
+
         get("/apis/:version/todos/", listTodos());
         get("/apis/:version/todos/:id", getSingleTodos());
-        get("/apis/:version/todos/:start_time/:end_time", listTodosWithTimeRange());
-        get("/apis/:version/todos/find/:id", getSingleTodosByID());
-        get("/apis/:version/todos_withstatus/find/:status", listTodosByStatus());
-        get("/apis/:version/todos_titles/:prefix", listTodosNamesByPrefix());
-        get("/apis/:version/todos_titles/:prefix/:status", listTodosNamesByStatusAndPrefix());
-        get("/apis/:version/todos_titles/:prefix/:status/:start_time/:end_time", listTodosNamesByPrefixStatusTimeRange());
+        get("/apis/:version/todos/:id/:status", listTodosByStatus());
+        get("/apis/:version/todos/range/:start_time/:end_time", listTodosWithTimeRange());
+        get("/apis/:version/todos/title/:prefix", listTodosNamesByPrefix());
+        get("/apis/:version/todos/title/:prefix/:status", listTodosNamesByStatusAndPrefix());
+        get("/apis/:version/todos/title/:prefix/:status/:start_time/:end_time", listTodosNamesByPrefixStatusTimeRange());
 
         post("/apis/:version/todos/", createNewTodos());
 
@@ -36,7 +46,20 @@ public class TaskController {
 
     private Route listTodos() {
         return (req, res) -> {
-            return "";
+            String sessionID = req.queryParams(AuthenticationController.KEY_SESSION_ID);
+            UserSession session = sessionRepository.findBySessionID(sessionID);
+            if (session != null) {
+                int userID = session.getUserID();
+                List<Task> tasks = taskRepository.findByUserId(userID);
+                String json = "";
+                if (tasks != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    json = mapper.writeValueAsString(tasks);
+                }
+                return json;
+            } else {
+                return "";
+            }
         };
     }
 
@@ -71,15 +94,26 @@ public class TaskController {
         };
     }
 
-    private Route getSingleTodosByID() {
-        return (req, res) -> {
-            return "";
-        };
-    }
-
     private Route getSingleTodos() {
         return (req, res) -> {
-            return "";
+            String sessionID = req.queryParams(AuthenticationController.KEY_SESSION_ID);
+            UserSession session = sessionRepository.findBySessionID(sessionID);
+            if (session != null) {
+                String taskID = req.params(":id");
+                String json = "";
+                try {
+                    Task task = taskRepository.findByTaskID(Integer.parseInt(taskID));
+                    if (task != null) {
+                        ObjectMapper mapper = new ObjectMapper();
+                        json = mapper.writeValueAsString(task);
+                    }
+                } catch (NumberFormatException er) {
+                    json = "{ error:InvalidTaskID }";
+                }
+                return json;
+            } else {
+                return "";
+            }
         };
     }
 

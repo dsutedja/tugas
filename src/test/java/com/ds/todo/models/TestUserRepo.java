@@ -1,11 +1,13 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.PasswordUtil;
+import com.ds.todo.utils.PasswordUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sql2o.Connection;
+import org.sql2o.Sql2o;
 
 import javax.sql.DataSource;
 
@@ -22,16 +24,30 @@ public class TestUserRepo {
         dataSource = new HikariDataSource(config);
     }
 
+    private void clearDB() {
+        // let's clear the test DB clean now
+        Sql2o engine = new Sql2o(dataSource);
+        try (Connection conn = engine.open()) {
+            String sql = "delete from USER";
+            conn.createQuery(sql).executeUpdate();
+            sql = "delete from TASK";
+            conn.createQuery(sql).executeUpdate();
+            sql = "delete from USER_SESSION";
+            conn.createQuery(sql).executeUpdate();
+        } catch (Exception er) {
+            er.printStackTrace();
+        }
 
+    }
     @Before
     public void initialize() {
         userRepository = new UserRepository(dataSource);
-        userRepository.deleteAll();
+        clearDB();
     }
 
     @After
     public void destroy() {
-        userRepository.deleteAll();
+        clearDB();
     }
 
     @Test

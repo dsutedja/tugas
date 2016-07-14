@@ -1,6 +1,6 @@
 package com.ds.todo.controllers;
 
-import com.ds.todo.com.ds.todo.utils.PasswordUtil;
+import com.ds.todo.utils.PasswordUtil;
 import com.ds.todo.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
@@ -12,13 +12,18 @@ import static spark.Spark.*;
 
 /**
  * Created by dsutedja on 6/20/16.
+ *
+ * TODOs:
+ * - Forgot password mechanism
+ * - Basic API Key support
+ *
  */
 public class AuthenticationController {
 
     private static final int LOGIN_TIMEOUT = 24 * 60 * 60 * 1000; // 24-hour milliseconds
     private static final int LOGIN_THRESHOLD = 5;
     private static final String INVALID_SESSION_ID = "(*_*)";
-    private static final String KEY_SESSION_COOKIE = "SESSIONID";
+    public static final String KEY_SESSION_ID = "SESSIONID";
 
     private UserSessionRepository mSessionRepo;
     private UserRepository mUserRepo;
@@ -114,7 +119,7 @@ public class AuthenticationController {
     }
 
     public String checkSession(Request req) {
-        String sessionId = req.queryParams(KEY_SESSION_COOKIE) == null ? "" : req.queryParams(KEY_SESSION_COOKIE);
+        String sessionId = req.queryParams(KEY_SESSION_ID) == null ? "" : req.queryParams(KEY_SESSION_ID);
         String username = req.queryParams("username") == null ? "" : req.queryParams("username");
         UserSession session = null;
 

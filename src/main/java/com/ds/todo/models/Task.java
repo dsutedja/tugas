@@ -4,7 +4,7 @@ package com.ds.todo.models;
  * Created by dsutedja on 6/28/16.
  */
 public class Task {
-    enum State {
+    public enum State {
         NONE,
         PENDING,
         STARTED,

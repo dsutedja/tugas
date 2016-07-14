@@ -1,6 +1,6 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.IDGenerator;
+import com.ds.todo.utils.IDGenerator;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
@@ -17,18 +17,6 @@ public class UserRepository {
     public UserRepository(DataSource dataSource) {
         mSql = new Sql2o(dataSource);
     }
-
-    //---- TESTING CODE ----//
-
-    void deleteAll() {
-        String sql = "DELETE from USER";
-        try (Connection conn = mSql.open()) {
-            conn.createQuery(sql).executeUpdate();
-        } catch (Exception er) {
-            er.printStackTrace();
-        }
-    }
-    //----- TESTING CODE ---//
 
     public User findByUsername(String username) {
         String sql =
@@ -65,7 +53,6 @@ public class UserRepository {
                 retVal = results.get(0);
                 retVal.mLoadedFromDB = true;
             }
-
         } catch (Exception er) {
             er.printStackTrace();
         }

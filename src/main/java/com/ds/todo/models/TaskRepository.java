@@ -1,7 +1,6 @@
 package com.ds.todo.models;
 
-import com.ds.todo.com.ds.todo.utils.DatesUtil;
-import com.ds.todo.com.ds.todo.utils.IDGenerator;
+import com.ds.todo.utils.IDGenerator;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
@@ -18,18 +17,6 @@ public class TaskRepository {
     public TaskRepository(DataSource dataSource) {
         mSql = new Sql2o(dataSource);
     }
-
-    // --- TEST CODE
-    void deleteAll() {
-        String sql = "DELETE from TASK";
-        try (Connection conn = mSql.open()) {
-            conn.createQuery(sql).executeUpdate();
-        } catch (Exception er) {
-            er.printStackTrace();
-        }
-    }
-    // --- END TEST CODE
-
 
     public Task findByTaskID(int id) {
         Task retVal = null;

@@ -1,4 +1,4 @@
-import com.ds.todo.com.ds.todo.utils.PasswordUtil;
+import com.ds.todo.utils.PasswordUtil;
 import com.ds.todo.models.User;
 import com.ds.todo.models.UserRepository;
 import com.zaxxer.hikari.HikariConfig;
